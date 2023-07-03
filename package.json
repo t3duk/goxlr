@@ -1,0 +1,12 @@
+{
+  "name": "goxlr",
+  "version": "1.0.0",
+  "description": "A wrapper for GoXLR Utility (https://github.com/GoXLR-on-Linux/goxlr-utility)",
+  "main": "index.js",
+  "scripts": {
+    "publish": "npm publish --access public"
+  },
+  "keywords": [],
+  "author": "t3d.uk",
+  "license": "MIT"
+}
