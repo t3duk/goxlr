@@ -1,8 +1,9 @@
-const goxlrjs = require("./index.js");
+const DaemonCommands = require("./goxlr").daemonCommands;
+const GoXLRCommands = require("./goxlr").goxlrCommands;
 
-async function main() {
-  const goxlr = await goxlrjs(14564);
-  console.log(goxlr);
-}
+const daemonCommands = new DaemonCommands();
+const goxlrCommands = new GoXLRCommands();
 
-main();
+(async () => {
+  await daemonCommands.openUi();
+})();
