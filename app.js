@@ -1,9 +1,9 @@
-const DaemonCommands = require("./goxlr").daemonCommands;
-const GoXLRCommands = require("./goxlr").goxlrCommands;
+const { GeneralCommands, DaemonCommands, GoxlrCommands } = require("./goxlr");
 
+const generalCommands = new GeneralCommands();
 const daemonCommands = new DaemonCommands();
-const goxlrCommands = new GoXLRCommands();
+const goxlrCommands = new GoxlrCommands();
 
 (async () => {
-  await daemonCommands.openUi();
+  goxlrCommands.setFaderMuteState("Mic", true);
 })();
