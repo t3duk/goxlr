@@ -1,6 +1,6 @@
 {
   "name": "goxlr",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A wrapper for GoXLR Utility (https://github.com/GoXLR-on-Linux/goxlr-utility)",
   "main": "index.js",
   "scripts": {
@@ -8,5 +8,8 @@
   },
   "keywords": [],
   "author": "t3d.uk",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.4.0"
+  }
 }
