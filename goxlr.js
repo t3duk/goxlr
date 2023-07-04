@@ -285,7 +285,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, "SaveMicProfile"] },
+      data: { Command: [serial, { SaveMicProfile: [] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -351,7 +351,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, "SaveProfile"] },
+      data: { Command: [serial, { SaveProfile: [] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -485,7 +485,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetFXEnabled: [fader, volume] }] },
+      data: { Command: [serial, { SetFXEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -507,7 +507,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { setHardTuneEnabled: [fader, faderValue] }] },
+      data: { Command: [serial, { setHardTuneEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -529,7 +529,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetMegaphoneEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -551,7 +551,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRobotEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -573,7 +573,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetCoughIsHold: [bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -595,7 +595,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetCoughMuteFunction: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -617,7 +617,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { LoadEffectPreset: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -639,7 +639,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { RenameActivePreset: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -661,7 +661,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { saveActivePreset: [] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -683,7 +683,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEchoAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -705,7 +705,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEchoDelayLeft: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -727,7 +727,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEchoDelayRight: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -749,7 +749,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetEchoFeedback: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -771,7 +773,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEchoFeedbackLeft: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -793,7 +795,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetEchoFeedbackRight: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -815,7 +819,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetEchoFeedbackXFBLtoR: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -837,7 +843,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetEchoFeedbackXFBRtoL: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -859,7 +867,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEchoStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -881,7 +889,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEchoTempo: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -903,7 +911,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetGenderAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -925,7 +933,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetGenderStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -947,7 +955,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetHardTuneAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -969,7 +977,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetHardTuneRate: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -991,7 +999,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetVolume: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1013,7 +1021,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetVolume: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1035,7 +1043,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetHardTuneWindow: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1057,7 +1065,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetMegaphoneAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1079,7 +1087,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetMegaphonePostGain: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1101,7 +1111,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetMegaphoneStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1123,7 +1133,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetPitchAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1145,7 +1155,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetPitchCharacter: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1167,7 +1177,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetPitchStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1189,7 +1199,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1211,7 +1221,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbDecay: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1233,7 +1243,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbDiffuse: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1255,7 +1265,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbEarlyLevel: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1277,7 +1287,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbHighColour: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1299,7 +1309,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbHighFactor: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1321,7 +1331,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbLowColour: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1343,7 +1353,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbModDepth: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1365,7 +1375,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbModSpeed: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1387,7 +1397,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbPreDelay: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1409,7 +1419,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbStyle: [nane] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1431,7 +1441,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetReverbTailLevel: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1453,7 +1463,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRobotDryMix: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1475,7 +1485,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRobotFreq: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1497,7 +1507,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRobotGain: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1519,7 +1529,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRobotPulseWidth: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1541,7 +1551,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRobotThreshold: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1563,7 +1573,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRobotWaveform: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1585,7 +1595,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRobotWidth: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1601,13 +1611,13 @@ class GoxlrCommands {
     close();
     return response;
   }
-  async setFader(fader, name) {
+  async setFader(name, name2) {
     await init();
 
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetFader: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1623,13 +1633,15 @@ class GoxlrCommands {
     close();
     return response;
   }
-  async setFaderMuteFunction(fader, name) {
+  async setFaderMuteFunction(name, name2) {
     await init();
 
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetFaderMuteFunction: [name, name2] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1645,13 +1657,13 @@ class GoxlrCommands {
     close();
     return response;
   }
-  async setScribbleIcon(fader, name) {
+  async setScribbleIcon(name, name2) {
     await init();
 
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetScribbleIcon: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1667,13 +1679,13 @@ class GoxlrCommands {
     close();
     return response;
   }
-  async setScribbleInvert(fader, bool) {
+  async setScribbleInvert(name, bool) {
     await init();
 
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetScribbleInvert: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1689,13 +1701,13 @@ class GoxlrCommands {
     close();
     return response;
   }
-  async setScribbleNumber(fader, name) {
+  async setScribbleNumber(name, name2) {
     await init();
 
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetScribbleNumber: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1711,13 +1723,13 @@ class GoxlrCommands {
     close();
     return response;
   }
-  async setScribbleText(fader, name) {
+  async setScribbleText(name, name2) {
     await init();
 
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetScribbleText: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1739,7 +1751,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetSwearButtonVolume: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1761,7 +1775,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetDeeser: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1783,7 +1797,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetMonitorMix: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1805,7 +1819,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSubMixEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1827,7 +1841,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSubMixLinked: [nane, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1849,7 +1863,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSubMixOutputMix: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1871,7 +1885,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSubMixVolume: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1889,11 +1903,11 @@ class GoxlrCommands {
   }
   async setVolume(name, value) {
     await init();
-    const faderValue = Math.round((volume / 100) * 255);
+    const faderValue = Math.round((value / 100) * 255);
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetVolume: [name, faderValue] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1915,7 +1929,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetButtonColours: [name, hex, hex2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1937,7 +1951,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetButtonGroupColours: [name, hex, hex2] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1959,7 +1975,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetButtonOffStyle: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -1981,7 +1997,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { setButtonGroupOffStyle: [name, name2] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2003,7 +2021,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetEncoderColour: [name, hex, hex2, hex3] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2025,7 +2045,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetAllFaderColours: [hex, hex2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2047,7 +2067,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetAllFaderDisplayStyle: [name] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2069,7 +2091,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetFaderColours: [name, hex, hex2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2091,7 +2113,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetAnimationMode: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2113,7 +2135,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetAnimationMod1: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2135,7 +2157,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetAnimationMod2: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2157,7 +2179,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetAnimationWaterfall: [name] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2179,7 +2203,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetFaderDisplayStyle: [name, name2] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2195,13 +2221,13 @@ class GoxlrCommands {
     close();
     return response;
   }
-  async SetSampleColour(name, hex, hex2, hex3) {
+  async setSampleColour(name, hex, hex2, hex3) {
     await init();
 
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSampleColour: [name, hex, hex2, hex3] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2217,13 +2243,13 @@ class GoxlrCommands {
     close();
     return response;
   }
-  async SetSampleOffStyle(name, name2) {
+  async setSampleOffStyle(name, name2) {
     await init();
 
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSampleOffStyle: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2245,7 +2271,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSimpleColour: [name, hex] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2267,7 +2293,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetMicrophoneGain: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2289,7 +2315,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetMicrophoneType: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2311,7 +2337,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetCompressorAttack: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2333,7 +2359,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetCompressorMakeupGain: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2355,7 +2383,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetCompressorRatio: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2377,7 +2405,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetCompressorReleaseTime: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2399,7 +2429,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetCompressorThreshold: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2421,7 +2453,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEqFreq: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2443,7 +2475,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEqGain: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2465,7 +2497,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEqMiniFreq: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2487,7 +2519,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetEqMiniGain: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2509,7 +2541,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetGateActive: [bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2531,7 +2563,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetGateAttack: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2553,7 +2585,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetGateAttenuation: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2575,7 +2607,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetGateRelease: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2597,7 +2629,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetGateThreshold: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2619,7 +2651,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetRouter: [name, name2, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2641,7 +2673,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { AddSample: [name, name2, name3] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2663,7 +2695,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { PlaySampleByIndex: [name, name2, value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2685,7 +2717,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { RemoveSampleByIndex: [name, name2, value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2707,7 +2741,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSamplerFunction: [name, name2, name3] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2729,7 +2763,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetSamplerOrder: [name, name2, name3] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2751,7 +2785,12 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [
+          serial,
+          { SetSampleStartPercent: [name, name2, value, value2] },
+        ],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2773,7 +2812,12 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [
+          serial,
+          { SetSampleStopPercent: [name, name2, value, value2e] },
+        ],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2795,7 +2839,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetSamplerPreBufferDuration: [value] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2817,7 +2863,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { ClearSampleProcessError: [] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2839,7 +2887,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetMuteHoldDuration: [value] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2861,7 +2909,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetVCMuteAlsoMuteCM: [bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2883,7 +2931,9 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: {
+        Command: [serial, { SetElementDisplayMode: [name, name2] }],
+      },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2905,7 +2955,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { LoadMicProfile: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2927,7 +2977,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { DeleteMicProfile: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2949,7 +2999,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { LoadProfile: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2971,7 +3021,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { DeleteProfile: [name] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
@@ -2993,7 +3043,7 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [fader, faderValue] }] },
+      data: { Command: [serial, { SetShutdownCommands: [json] }] },
     };
     socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
