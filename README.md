@@ -15,6 +15,20 @@ Really quite simple javascript wrapper for using the GoXLR Utility API.
 
 Refer to the [documentation](https://github.com/teddybrine/goxlr-js/wiki)
 
+# Example
+
+```js
+const { GeneralCommands, DaemonCommands, GoxlrCommands } = require("goxlr");
+
+const generalCommands = new GeneralCommands();
+const daemonCommands = new DaemonCommands();
+const goxlrCommands = new GoxlrCommands();
+
+(async () => {
+  goxlrCommands.setVolume("Mic", 100);
+})();
+```
+
 # Disclaimer
 
 This project is also not supported by, or affiliated in any way with, TC-Helicon. For the official GoXLR software, please refer to their website.
