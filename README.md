@@ -1,6 +1,14 @@
-# GoXLR.js
+# GoXLR JS
 
 Really quite simple javascript wrapper for using the GoXLR Utility API.
+
+# Install
+
+`npm i goxlr@latest`
+
+# Usage
+
+Refer to the [documentation](
 
 # Disclaimer
 
