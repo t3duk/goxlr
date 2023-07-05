@@ -5,7 +5,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/teddybrine/goxlr)
 ![Discord](https://img.shields.io/discord/1124010710138106017?logo=discord&logoColor=5865F2&label=Discord&color=5865F2)
 
-GoXLR JS is a JavaScript Wrapper for the GoXLR Utility Tool by the [GoXLR on Linux Organisation](https://github.com/GoXLR-on-Linux).
+GoXLR JS is a JavaScript Wrapper for the GoXLR Utility API made by the [GoXLR on Linux Organisation](https://github.com/GoXLR-on-Linux).
 
 # Install
 
