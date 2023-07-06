@@ -10,7 +10,6 @@
   "author": "t3d.uk",
   "license": "MIT",
   "dependencies": {
-    "goxlr": "^1.1.0",
     "ws": "^8.13.0"
   }
 }

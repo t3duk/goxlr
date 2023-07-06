@@ -18,11 +18,8 @@ You can install GoXLR JS from [npm](https://npmjs.org/goxlr).
 To start, import the classes into your project:
 
 ```js
-const { GeneralCommands, DaemonCommands, GoxlrCommands } = require("goxlr");
-
-const generalCommands = new GeneralCommands();
-const daemonCommands = new DaemonCommands();
-const goxlrCommands = new GoxlrCommands();
+const { goxlr } = require("./goxlr");
+const goxlrInstance = new goxlr();
 ```
 
 Refer to the [documentation](https://github.com/teddybrine/goxlr-js/wiki) to see the nearly **150** functions you can use.
@@ -30,15 +27,16 @@ Refer to the [documentation](https://github.com/teddybrine/goxlr-js/wiki) to see
 # Example
 
 ```js
-const { GeneralCommands, DaemonCommands, GoxlrCommands } = require("goxlr");
-const goxlrCommands = new GoxlrCommands();
+const { goxlr } = require("./goxlr");
+const goxlrInstance = new goxlr();
 
-async function buttonClicked() {
-  await goxlrCommands.setVolume("Mic", 100);
-  console.log("Button Clicked! Set Mic to 100%.")
+async function mute() {
+  await goxlrInstance.setVolume("Mic", 0);
+  await goxlrInstance.setVolume("Chat", 0);
+  await goxlrInstance.close();
 }
 
-buttonClicked()
+mute()
 ```
 
 # Contributing

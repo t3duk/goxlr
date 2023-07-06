@@ -1,22 +1,24 @@
 const WebSocket = require("ws");
-const chalk = require("chalk");
-var socket;
-var serial;
+var socket = 0;
+var serial = 0;
 var id = 0;
 
-async function init() {
-  socket = new WebSocket(`ws://127.0.0.1:14564/api/websocket`);
-
+async function init(bindAddress = "127.0.0.1", port = 14564) {
   await new Promise((resolve, reject) => {
-    socket.onopen = function () {
+    if (socket != 0) {
+      resolve(true);
+      return;
+    }
+    socket = new WebSocket(`ws://${bindAddress}:${port}/api/websocket`);
+    socket.onopen = async function () {
       const data = {
         id: id,
         data: "GetStatus",
       };
-      socket.send(JSON.stringify(data));
+      await socket.send(JSON.stringify(data));
     };
 
-    socket.onmessage = function (event) {
+    socket.onmessage = async function (event) {
       id++;
       const data = JSON.parse(event.data);
       if (data.data.Status) {
@@ -25,80 +27,51 @@ async function init() {
       }
     };
 
-    socket.onerror = function (error) {
-      console.log(chalk.red("Error - GoXLR Utility has not been found."));
+    socket.onerror = async function (error) {
+      console.log("Error - GoXLR Utility has not been found.");
+      console.error(error);
       process.exit(1);
     };
+  }).catch((err) => {
+    console.error(err);
+    process.exit(1);
   });
 }
 
-async function close() {
-  socket.close();
-}
-
-class DaemonCommands {
+class goxlr {
+  constructor(bindAddress, port) {
+    this.bindAddress = bindAddress;
+    this.port = port;
+  }
   async openUi() {
-    await init();
+    await init(this.bindAddress, this.port);
     const flowId = id;
     const data = {
       id: flowId,
       data: { Daemon: "OpenUi" },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async activate() {
-    await init();
+    await init(this.bindAddress, this.port);
     const flowId = id;
     const data = {
       id: flowId,
       data: { Daemon: "Activate" },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async deactivate() {
-    await init();
+    await init(this.bindAddress, this.port);
     const flowId = id;
     const data = {
       id: flowId,
       data: { Daemon: "StopDaemon" },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async openPath(path) {
     // Profiles, MicProfiles, Presets, Samples, Icons, Logs,
@@ -109,18 +82,7 @@ class DaemonCommands {
       data: { Daemon: { OpenPath: path } },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setLogLevel(level) {
     // Off,Error, Warn, Info, Debug, Trace,
@@ -131,18 +93,7 @@ class DaemonCommands {
       data: { Daemon: { SetLogLevel: level } },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setShowTrayIcon(bool) {
     // true, false
@@ -153,18 +104,7 @@ class DaemonCommands {
       data: { Daemon: { SetShowTrayIcon: bool } },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setTTSEnabled(bool) {
     // true, false
@@ -175,18 +115,7 @@ class DaemonCommands {
       data: { Daemon: { SetTTSEnabled: bool } },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setAutoStartEnabled(bool) {
     // true, false
@@ -197,18 +126,7 @@ class DaemonCommands {
       data: { Daemon: { SetAutoStartEnabled: bool } },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setAllowNetworkAccess(bool) {
     // true, false
@@ -219,18 +137,7 @@ class DaemonCommands {
       data: { Daemon: { SetAllowNetworkAccess: bool } },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async recoverDefaults(pach) {
     // Profiles, MicProfiles, Presets, Samples, Icons, Logs,
@@ -241,22 +148,44 @@ class DaemonCommands {
       data: { Daemon: { RecoverDefaults: pach } },
     };
     socket.send(JSON.stringify(data));
+    return data;
+  }
+  async close() {
+    if (socket) {
+      socket.close();
+      return true;
+    }
+    console.log("Socket not connected");
+    return false;
+  }
+  async getStatus() {
+    await init(this.bindAddress, this.port);
+    const flowId = id;
+    const data = {
+      id: flowId,
+      data: "GetStatus",
+    };
+    socket.send(JSON.stringify(data));
     const response = await new Promise((resolve, reject) => {
       socket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
+        if (data.data.Status) {
+          resolve(data.data.Status);
         }
       };
     });
-    close();
-    return response;
+    return data;
   }
-}
-
-class GoxlrCommands {
+  async ping() {
+    await init(this.bindAddress, this.port);
+    const flowId = id;
+    const data = {
+      id: flowId,
+      data: "Ping",
+    };
+    socket.send(JSON.stringify(data));
+    return data;
+  }
   async newMicProfile(name) {
     await init();
 
@@ -266,18 +195,7 @@ class GoxlrCommands {
       data: { Command: [serial, { NewMicProfile: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async saveMicProfile() {
     await init();
@@ -288,18 +206,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SaveMicProfile: [] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async saveMicProfileAs(name) {
     await init();
@@ -310,18 +217,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SaveMicProfileAs: name }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async newProfile(name) {
     await init();
@@ -332,18 +228,7 @@ class GoxlrCommands {
       data: { Command: [serial, { NewProfile: name }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async saveProfile() {
     await init();
@@ -354,18 +239,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SaveProfile: [] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async saveProfileAs(name) {
     await init();
@@ -376,18 +250,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SaveProfileAs: name }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setActiveEffectPreset(present) {
     await init();
@@ -400,18 +263,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setActiveSamplerBank(bank) {
     await init();
@@ -422,18 +274,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetActiveSamplerBank: bank }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setCoughMuteState(bool) {
     await init();
@@ -444,18 +285,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetCoughMuteState: bool }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setFaderMuteState(name, bool) {
     await init();
@@ -466,18 +296,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetFaderMuteState: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setFXEnabled(bool) {
     await init();
@@ -488,18 +307,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetFXEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setHardTuneEnabled(bool) {
     await init();
@@ -510,18 +318,7 @@ class GoxlrCommands {
       data: { Command: [serial, { setHardTuneEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setMegaphoneEnabled(bool) {
     await init();
@@ -532,18 +329,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetMegaphoneEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRobotEnabled(bool) {
     await init();
@@ -554,18 +340,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRobotEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setCoughIsHold(bool) {
     await init();
@@ -576,18 +351,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetCoughIsHold: [bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setCoughMuteFunction(name) {
     await init();
@@ -598,18 +362,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetCoughMuteFunction: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async loadEffectPreset(name) {
     await init();
@@ -620,18 +373,7 @@ class GoxlrCommands {
       data: { Command: [serial, { LoadEffectPreset: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async renameActivePreset(name) {
     await init();
@@ -642,18 +384,7 @@ class GoxlrCommands {
       data: { Command: [serial, { RenameActivePreset: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async saveActivePreset() {
     await init();
@@ -664,18 +395,7 @@ class GoxlrCommands {
       data: { Command: [serial, { saveActivePreset: [] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoAmount(value) {
     await init();
@@ -686,18 +406,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEchoAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoDelayLeft(value) {
     await init();
@@ -708,18 +417,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEchoDelayLeft: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoDelayRight(value) {
     await init();
@@ -730,18 +428,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEchoDelayRight: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoFeedback(value) {
     await init();
@@ -754,18 +441,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoFeedbackLeft(value) {
     await init();
@@ -776,18 +452,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEchoFeedbackLeft: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoFeedbackRight(value) {
     await init();
@@ -800,18 +465,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoFeedbackXFBLtoR(value) {
     await init();
@@ -824,18 +478,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoFeedbackXFBRtoL(value) {
     await init();
@@ -848,18 +491,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoStyle(name) {
     await init();
@@ -870,18 +502,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEchoStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEchoTempo(value) {
     await init();
@@ -892,18 +513,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEchoTempo: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setGenderAmount(value) {
     await init();
@@ -914,18 +524,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetGenderAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setGenderStyle(name) {
     await init();
@@ -936,18 +535,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetGenderStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setHardTuneAmount(value) {
     await init();
@@ -958,18 +546,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetHardTuneAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setHardTuneRate(value) {
     await init();
@@ -980,18 +557,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetHardTuneRate: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setHardTuneSource(name) {
     await init();
@@ -999,21 +565,10 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [name] }] },
+      data: { Command: [serial, { SetHardTuneSource: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setHardTuneStyle(name) {
     await init();
@@ -1021,21 +576,10 @@ class GoxlrCommands {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetVolume: [name] }] },
+      data: { Command: [serial, { SetHardTuneStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setHardTuneWindow(value) {
     await init();
@@ -1046,18 +590,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetHardTuneWindow: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setMegaphoneAmount(value) {
     await init();
@@ -1068,18 +601,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetMegaphoneAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setMegaphonePostGain(value) {
     await init();
@@ -1092,18 +614,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setMegaphoneStyle(name) {
     await init();
@@ -1114,18 +625,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetMegaphoneStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setPitchAmount(value) {
     await init();
@@ -1136,18 +636,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetPitchAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setPitchCharacter(value) {
     await init();
@@ -1158,18 +647,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetPitchCharacter: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setPitchStyle(name) {
     await init();
@@ -1180,18 +658,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetPitchStyle: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbAmount(value) {
     await init();
@@ -1202,18 +669,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbAmount: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbDecay(value) {
     await init();
@@ -1224,18 +680,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbDecay: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbDiffuse(value) {
     await init();
@@ -1246,18 +691,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbDiffuse: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbEarlyLevel(value) {
     await init();
@@ -1268,18 +702,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbEarlyLevel: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbHighColour(value) {
     await init();
@@ -1290,18 +713,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbHighColour: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbHighFactor(value) {
     await init();
@@ -1312,18 +724,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbHighFactor: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbLowColour(value) {
     await init();
@@ -1334,18 +735,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbLowColour: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbModDepth(value) {
     await init();
@@ -1356,18 +746,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbModDepth: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbModSpeed(value) {
     await init();
@@ -1378,18 +757,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbModSpeed: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbPreDelay(value) {
     await init();
@@ -1400,18 +768,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbPreDelay: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbStyle(nane) {
     await init();
@@ -1422,18 +779,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbStyle: [nane] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setReverbTailLevel(value) {
     await init();
@@ -1444,18 +790,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetReverbTailLevel: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRobotDryMix(value) {
     await init();
@@ -1466,18 +801,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRobotDryMix: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRobotFreq(name, value) {
     await init();
@@ -1488,18 +812,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRobotFreq: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRobotGain(name, value) {
     await init();
@@ -1510,18 +823,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRobotGain: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRobotPulseWidth(value) {
     await init();
@@ -1532,18 +834,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRobotPulseWidth: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRobotThreshold(value) {
     await init();
@@ -1554,18 +845,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRobotThreshold: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRobotWaveform(value) {
     await init();
@@ -1576,18 +856,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRobotWaveform: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRobotWidth(name, value) {
     await init();
@@ -1598,18 +867,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRobotWidth: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setFader(name, name2) {
     await init();
@@ -1620,18 +878,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetFader: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setFaderMuteFunction(name, name2) {
     await init();
@@ -1644,18 +891,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setScribbleIcon(name, name2) {
     await init();
@@ -1666,18 +902,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetScribbleIcon: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setScribbleInvert(name, bool) {
     await init();
@@ -1688,18 +913,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetScribbleInvert: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setScribbleNumber(name, name2) {
     await init();
@@ -1710,18 +924,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetScribbleNumber: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setScribbleText(name, name2) {
     await init();
@@ -1732,18 +935,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetScribbleText: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSwearButtonVolume(value) {
     await init();
@@ -1756,18 +948,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setDeeser(value) {
     await init();
@@ -1778,18 +959,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetDeeser: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setMonitorMix(name) {
     await init();
@@ -1800,18 +970,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetMonitorMix: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSubMixEnabled(bool) {
     await init();
@@ -1822,18 +981,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSubMixEnabled: [bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSubMixLinked(nane, bool) {
     await init();
@@ -1844,18 +992,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSubMixLinked: [nane, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSubMixOutputMix(name, name2) {
     await init();
@@ -1866,18 +1003,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSubMixOutputMix: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSubMixVolume(name, value) {
     await init();
@@ -1888,18 +1014,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSubMixVolume: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setVolume(name, value) {
     await init();
@@ -1910,18 +1025,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetVolume: [name, faderValue] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setButtonColours(name, hex, hex2) {
     await init();
@@ -1932,18 +1036,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetButtonColours: [name, hex, hex2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setButtonGroupColours(name, hex, hex2) {
     await init();
@@ -1956,18 +1049,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setButtonOffStyle(name, name2) {
     await init();
@@ -1978,18 +1060,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetButtonOffStyle: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setButtonGroupOffStyle(name, name2) {
     await init();
@@ -2002,18 +1073,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEncoderColour(name, hex, hex2, hex3) {
     await init();
@@ -2026,18 +1086,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setAllFaderColours(hex, hex2) {
     await init();
@@ -2048,18 +1097,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetAllFaderColours: [hex, hex2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setAllFaderDisplayStyle(name) {
     await init();
@@ -2072,18 +1110,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setFaderColours(name, hex, hex2) {
     await init();
@@ -2094,18 +1121,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetFaderColours: [name, hex, hex2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setAnimationMode(name) {
     await init();
@@ -2116,18 +1132,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetAnimationMode: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setAnimationMod1(value) {
     await init();
@@ -2138,18 +1143,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetAnimationMod1: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setAnimationMod2(value) {
     await init();
@@ -2160,18 +1154,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetAnimationMod2: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setAnimationWaterfall(name) {
     await init();
@@ -2184,18 +1167,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async SetFaderDisplayStyle(name, name2) {
     await init();
@@ -2208,18 +1180,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSampleColour(name, hex, hex2, hex3) {
     await init();
@@ -2230,18 +1191,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSampleColour: [name, hex, hex2, hex3] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSampleOffStyle(name, name2) {
     await init();
@@ -2252,18 +1202,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSampleOffStyle: [name, name2] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSimpleColour(name, hex) {
     await init();
@@ -2274,18 +1213,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSimpleColour: [name, hex] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setMicrophoneGain(name, value) {
     await init();
@@ -2296,18 +1224,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetMicrophoneGain: [name, value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setMicrophoneType(name) {
     await init();
@@ -2318,18 +1235,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetMicrophoneType: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setCompressorAttack(value) {
     await init();
@@ -2340,18 +1246,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetCompressorAttack: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setCompressorMakeupGain(value) {
     await init();
@@ -2364,18 +1259,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setCompressorRatio(value) {
     await init();
@@ -2386,18 +1270,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetCompressorRatio: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setCompressorReleaseTime(value) {
     await init();
@@ -2410,18 +1283,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setCompressorThreshold(value) {
     await init();
@@ -2434,18 +1296,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEqFreq(name, bool) {
     await init();
@@ -2456,18 +1307,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEqFreq: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEqGain(name, bool) {
     await init();
@@ -2478,18 +1318,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEqGain: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEqMiniFreq(name, bool) {
     await init();
@@ -2500,18 +1329,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEqMiniFreq: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setEqMiniGain(name, bool) {
     await init();
@@ -2522,18 +1340,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetEqMiniGain: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setGateActive(bool) {
     await init();
@@ -2544,18 +1351,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetGateActive: [bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setGateAttack(value) {
     await init();
@@ -2566,18 +1362,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetGateAttack: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setGateAttenuation(value) {
     await init();
@@ -2588,18 +1373,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetGateAttenuation: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setGateRelease(value) {
     await init();
@@ -2610,18 +1384,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetGateRelease: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setGateThreshold(value) {
     await init();
@@ -2632,18 +1395,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetGateThreshold: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setRouter(name, name2, bool) {
     await init();
@@ -2654,18 +1406,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetRouter: [name, name2, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async addSample(name, name2, name3) {
     await init();
@@ -2676,18 +1417,7 @@ class GoxlrCommands {
       data: { Command: [serial, { AddSample: [name, name2, name3] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async playSampleByIndex(name, name2, value) {
     await init();
@@ -2698,18 +1428,7 @@ class GoxlrCommands {
       data: { Command: [serial, { PlaySampleByIndex: [name, name2, value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async removeSampleByIndex(name, name2, value) {
     await init();
@@ -2722,18 +1441,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSamplerFunction(name, name2, name3) {
     await init();
@@ -2744,18 +1452,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSamplerFunction: [name, name2, name3] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSamplerOrder(name, name2, name3) {
     await init();
@@ -2766,18 +1463,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetSamplerOrder: [name, name2, name3] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSampleStartPercent(name, name2, value, value2) {
     await init();
@@ -2793,18 +1479,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSampleStopPercent(name, name2, value, value2) {
     await init();
@@ -2820,18 +1495,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setSamplerPreBufferDuration(value) {
     await init();
@@ -2844,18 +1508,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async clearSampleProcessError() {
     await init();
@@ -2868,18 +1521,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setMuteHoldDuration(value) {
     await init();
@@ -2890,18 +1532,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetMuteHoldDuration: [value] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setVCMuteAlsoMuteCM(bool) {
     await init();
@@ -2912,18 +1543,7 @@ class GoxlrCommands {
       data: { Command: [serial, { SetVCMuteAlsoMuteCM: [bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setElementDisplayMode(name, name2) {
     await init();
@@ -2936,18 +1556,7 @@ class GoxlrCommands {
       },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async loadMicProfile(name, bool) {
     await init();
@@ -2958,18 +1567,7 @@ class GoxlrCommands {
       data: { Command: [serial, { LoadMicProfile: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async deleteMicProfile(name) {
     await init();
@@ -2980,18 +1578,7 @@ class GoxlrCommands {
       data: { Command: [serial, { DeleteMicProfile: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async loadProfile(name, bool) {
     await init();
@@ -3002,18 +1589,7 @@ class GoxlrCommands {
       data: { Command: [serial, { LoadProfile: [name, bool] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async deleteProfile(name) {
     await init();
@@ -3024,18 +1600,7 @@ class GoxlrCommands {
       data: { Command: [serial, { DeleteProfile: [name] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
   async setShutdownCommands(json) {
     await init();
@@ -3046,65 +1611,10 @@ class GoxlrCommands {
       data: { Command: [serial, { SetShutdownCommands: [json] }] },
     };
     socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
-  }
-}
-class GeneralCommands {
-  async getStatus() {
-    await init();
-    const flowId = id;
-    const data = {
-      id: flowId,
-      data: "GetStatus",
-    };
-    socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.data.Status) {
-          resolve(data.data.Status);
-        }
-      };
-    });
-    close();
-    return response;
-  }
-  async ping() {
-    await init();
-    const flowId = id;
-    const data = {
-      id: flowId,
-      data: "Ping",
-    };
-    socket.send(JSON.stringify(data));
-    const response = await new Promise((resolve, reject) => {
-      socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        if (data.id == flowId) {
-          resolve(data);
-        } else {
-          reject(data);
-        }
-      };
-    });
-    close();
-    return response;
+    return data;
   }
 }
 
 module.exports = {
-  GoxlrCommands,
-  DaemonCommands,
-  GeneralCommands,
+  goxlr,
 };
