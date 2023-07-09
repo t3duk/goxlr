@@ -19,7 +19,7 @@ You can install GoXLR JS from [npm](https://npmjs.org/goxlr).
 To start, import the classes into your project:
 
 ```js
-const { goxlr } = require("./goxlr");
+const { goxlr } = require("goxlr");
 const goxlrInstance = new goxlr();
 ```
 
@@ -28,7 +28,7 @@ Refer to the [documentation](https://github.com/teddybrine/goxlr-js/wiki) to see
 # Example
 
 ```js
-const { goxlr } = require("./goxlr");
+const { goxlr } = require("goxlr");
 const goxlrInstance = new goxlr();
 
 async function mute() {
