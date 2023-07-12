@@ -3,8 +3,10 @@ var socket = 0;
 var serial = 0;
 var id = 0;
 var eventQueue = [];
+const debug = true;
 
-async function init(bindAddress = "127.0.0.1", port = 14564) {
+async function init(bindAddress = "127.0.0.1", port = 14564, userSerial = 0) {
+  console.log(bindAddress, port, userSerial);
   await new Promise((resolve, reject) => {
     if (socket != 0) {
       console.log("Socket already initialized.");
@@ -26,12 +28,30 @@ async function init(bindAddress = "127.0.0.1", port = 14564) {
       socket.onmessage = async function (event) {
         const data = JSON.parse(event.data);
         eventQueue.push(data);
-        if (data.data.Status && !serial && data.id == id) {
-          serial = Object.keys(data.data.Status.mixers)[0];
-          resolve(serial);
-          id++;
-        } else if (data.data.Status && serial && data.id == id) {
-          resolve(serial);
+        if (userSerial != 0) {
+          if (data.data.Status && data.data.Status.mixers[userSerial]) {
+            console.log("User defined serial found.");
+            serial = userSerial;
+            resolve(serial);
+          } else {
+            if (data.data.Status && !serial && data.id == id) {
+              console.log("No user defined serial found.");
+              serial = Object.keys(data.data.Status.mixers)[0];
+              resolve(serial);
+              id++;
+            } else if (data.data.Status && serial && data.id == id) {
+              resolve(serial);
+            }
+          }
+        } else {
+          if (data.data.Status && !serial && data.id == id) {
+            console.log("No user defined serial found.");
+            serial = Object.keys(data.data.Status.mixers)[0];
+            resolve(serial);
+            id++;
+          } else if (data.data.Status && serial && data.id == id) {
+            resolve(serial);
+          }
         }
       };
 
@@ -67,12 +87,13 @@ async function awaitQueueData(flowId) {
 }
 
 class goxlr {
-  constructor(bindAddress, port) {
+  constructor(bindAddress, port, serial) {
     this.bindAddress = bindAddress;
     this.port = port;
+    this.serial = serial;
   }
   async openUi() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -90,7 +111,7 @@ class goxlr {
     return moreData;
   }
   async activate() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -108,7 +129,7 @@ class goxlr {
     return moreData;
   }
   async deactivate() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -127,7 +148,7 @@ class goxlr {
   }
   async openPath(path) {
     // Profiles, MicProfiles, Presets, Samples, Icons, Logs,
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -146,7 +167,7 @@ class goxlr {
   }
   async setLogLevel(level) {
     // Off,Error, Warn, Info, Debug, Trace,
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -165,7 +186,7 @@ class goxlr {
   }
   async setShowTrayIcon(bool) {
     // true, false
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -184,7 +205,7 @@ class goxlr {
   }
   async setTTSEnabled(bool) {
     // true, false
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -203,7 +224,7 @@ class goxlr {
   }
   async setAutoStartEnabled(bool) {
     // true, false
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -222,7 +243,7 @@ class goxlr {
   }
   async setAllowNetworkAccess(bool) {
     // true, false
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -241,7 +262,7 @@ class goxlr {
   }
   async recoverDefaults(pach) {
     // Profiles, MicProfiles, Presets, Samples, Icons, Logs,
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -260,7 +281,7 @@ class goxlr {
   }
   async connect() {
     if (!socket) {
-      await init(this.bindAddress, this.port);
+      await init(this.bindAddress, this.port, this.serial);
       return true;
     }
     console.log("Socket already connected");
@@ -276,7 +297,7 @@ class goxlr {
     return false;
   }
   async getStatus() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -294,7 +315,7 @@ class goxlr {
     return moreData;
   }
   async ping() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const flowId = id;
     const data = {
       id: flowId,
@@ -312,7 +333,7 @@ class goxlr {
     return moreData;
   }
   async newMicProfile(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -331,7 +352,7 @@ class goxlr {
     return moreData;
   }
   async saveMicProfile() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -350,7 +371,7 @@ class goxlr {
     return moreData;
   }
   async saveMicProfileAs(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -369,7 +390,7 @@ class goxlr {
     return moreData;
   }
   async newProfile(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -388,7 +409,7 @@ class goxlr {
     return moreData;
   }
   async saveProfile() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -407,7 +428,7 @@ class goxlr {
     return moreData;
   }
   async saveProfileAs(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -426,7 +447,7 @@ class goxlr {
     return moreData;
   }
   async setActiveEffectPreset(present) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -447,7 +468,7 @@ class goxlr {
     return moreData;
   }
   async setActiveSamplerBank(bank) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -466,7 +487,7 @@ class goxlr {
     return moreData;
   }
   async setCoughMuteState(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -485,7 +506,7 @@ class goxlr {
     return moreData;
   }
   async setFaderMuteState(name, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -504,7 +525,7 @@ class goxlr {
     return moreData;
   }
   async setFXEnabled(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -523,7 +544,7 @@ class goxlr {
     return moreData;
   }
   async setHardTuneEnabled(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -542,7 +563,7 @@ class goxlr {
     return moreData;
   }
   async setMegaphoneEnabled(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -561,7 +582,7 @@ class goxlr {
     return moreData;
   }
   async setRobotEnabled(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -580,7 +601,7 @@ class goxlr {
     return moreData;
   }
   async setCoughIsHold(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -599,7 +620,7 @@ class goxlr {
     return moreData;
   }
   async setCoughMuteFunction(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -618,7 +639,7 @@ class goxlr {
     return moreData;
   }
   async loadEffectPreset(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -637,7 +658,7 @@ class goxlr {
     return moreData;
   }
   async renameActivePreset(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -656,7 +677,7 @@ class goxlr {
     return moreData;
   }
   async saveActivePreset() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -675,7 +696,7 @@ class goxlr {
     return moreData;
   }
   async setEchoAmount(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -694,7 +715,7 @@ class goxlr {
     return moreData;
   }
   async setEchoDelayLeft(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -713,7 +734,7 @@ class goxlr {
     return moreData;
   }
   async setEchoDelayRight(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -732,7 +753,7 @@ class goxlr {
     return moreData;
   }
   async setEchoFeedback(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -753,7 +774,7 @@ class goxlr {
     return moreData;
   }
   async setEchoFeedbackLeft(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -772,7 +793,7 @@ class goxlr {
     return moreData;
   }
   async setEchoFeedbackRight(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -793,7 +814,7 @@ class goxlr {
     return moreData;
   }
   async setEchoFeedbackXFBLtoR(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -814,7 +835,7 @@ class goxlr {
     return moreData;
   }
   async setEchoFeedbackXFBRtoL(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -835,7 +856,7 @@ class goxlr {
     return moreData;
   }
   async setEchoStyle(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -854,7 +875,7 @@ class goxlr {
     return moreData;
   }
   async setEchoTempo(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -873,7 +894,7 @@ class goxlr {
     return moreData;
   }
   async setGenderAmount(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -892,7 +913,7 @@ class goxlr {
     return moreData;
   }
   async setGenderStyle(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -911,7 +932,7 @@ class goxlr {
     return moreData;
   }
   async setHardTuneAmount(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -930,7 +951,7 @@ class goxlr {
     return moreData;
   }
   async setHardTuneRate(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -949,7 +970,7 @@ class goxlr {
     return moreData;
   }
   async setHardTuneSource(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -968,7 +989,7 @@ class goxlr {
     return moreData;
   }
   async setHardTuneStyle(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -987,7 +1008,7 @@ class goxlr {
     return moreData;
   }
   async setHardTuneWindow(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1006,7 +1027,7 @@ class goxlr {
     return moreData;
   }
   async setMegaphoneAmount(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1025,7 +1046,7 @@ class goxlr {
     return moreData;
   }
   async setMegaphonePostGain(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1046,7 +1067,7 @@ class goxlr {
     return moreData;
   }
   async setMegaphoneStyle(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1065,7 +1086,7 @@ class goxlr {
     return moreData;
   }
   async setPitchAmount(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1084,7 +1105,7 @@ class goxlr {
     return moreData;
   }
   async setPitchCharacter(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1103,7 +1124,7 @@ class goxlr {
     return moreData;
   }
   async setPitchStyle(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1122,7 +1143,7 @@ class goxlr {
     return moreData;
   }
   async setReverbAmount(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1141,7 +1162,7 @@ class goxlr {
     return moreData;
   }
   async setReverbDecay(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1160,7 +1181,7 @@ class goxlr {
     return moreData;
   }
   async setReverbDiffuse(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1179,7 +1200,7 @@ class goxlr {
     return moreData;
   }
   async setReverbEarlyLevel(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1198,7 +1219,7 @@ class goxlr {
     return moreData;
   }
   async setReverbHighColour(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1217,7 +1238,7 @@ class goxlr {
     return moreData;
   }
   async setReverbHighFactor(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1236,7 +1257,7 @@ class goxlr {
     return moreData;
   }
   async setReverbLowColour(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1255,7 +1276,7 @@ class goxlr {
     return moreData;
   }
   async setReverbModDepth(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1274,7 +1295,7 @@ class goxlr {
     return moreData;
   }
   async setReverbModSpeed(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1293,7 +1314,7 @@ class goxlr {
     return moreData;
   }
   async setReverbPreDelay(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1312,7 +1333,7 @@ class goxlr {
     return moreData;
   }
   async setReverbStyle(nane) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1331,7 +1352,7 @@ class goxlr {
     return moreData;
   }
   async setReverbTailLevel(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1350,7 +1371,7 @@ class goxlr {
     return moreData;
   }
   async setRobotDryMix(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1369,7 +1390,7 @@ class goxlr {
     return moreData;
   }
   async setRobotFreq(name, value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1388,7 +1409,7 @@ class goxlr {
     return moreData;
   }
   async setRobotGain(name, value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1407,7 +1428,7 @@ class goxlr {
     return moreData;
   }
   async setRobotPulseWidth(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1426,7 +1447,7 @@ class goxlr {
     return moreData;
   }
   async setRobotThreshold(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1445,7 +1466,7 @@ class goxlr {
     return moreData;
   }
   async setRobotWaveform(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1464,7 +1485,7 @@ class goxlr {
     return moreData;
   }
   async setRobotWidth(name, value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1483,7 +1504,7 @@ class goxlr {
     return moreData;
   }
   async setFader(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1502,7 +1523,7 @@ class goxlr {
     return moreData;
   }
   async setFaderMuteFunction(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1523,7 +1544,7 @@ class goxlr {
     return moreData;
   }
   async setScribbleIcon(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1542,7 +1563,7 @@ class goxlr {
     return moreData;
   }
   async setScribbleInvert(name, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1561,7 +1582,7 @@ class goxlr {
     return moreData;
   }
   async setScribbleNumber(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1580,7 +1601,7 @@ class goxlr {
     return moreData;
   }
   async setScribbleText(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1599,7 +1620,7 @@ class goxlr {
     return moreData;
   }
   async setSwearButtonVolume(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1620,7 +1641,7 @@ class goxlr {
     return moreData;
   }
   async setDeeser(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1639,7 +1660,7 @@ class goxlr {
     return moreData;
   }
   async setMonitorMix(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1658,7 +1679,7 @@ class goxlr {
     return moreData;
   }
   async setSubMixEnabled(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1677,7 +1698,7 @@ class goxlr {
     return moreData;
   }
   async setSubMixLinked(nane, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1696,7 +1717,7 @@ class goxlr {
     return moreData;
   }
   async setSubMixOutputMix(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1715,7 +1736,7 @@ class goxlr {
     return moreData;
   }
   async setSubMixVolume(name, value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1734,7 +1755,7 @@ class goxlr {
     return moreData;
   }
   async setVolume(name, value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
     const faderValue = Math.round((value / 100) * 255);
     const flowId = id;
     const data = {
@@ -1753,7 +1774,7 @@ class goxlr {
     return moreData;
   }
   async setButtonColours(name, hex, hex2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1772,7 +1793,7 @@ class goxlr {
     return moreData;
   }
   async setButtonGroupColours(name, hex, hex2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1793,7 +1814,7 @@ class goxlr {
     return moreData;
   }
   async setButtonOffStyle(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1812,7 +1833,7 @@ class goxlr {
     return moreData;
   }
   async setButtonGroupOffStyle(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1833,7 +1854,7 @@ class goxlr {
     return moreData;
   }
   async setEncoderColour(name, hex, hex2, hex3) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1854,7 +1875,7 @@ class goxlr {
     return moreData;
   }
   async setAllFaderColours(hex, hex2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1873,7 +1894,7 @@ class goxlr {
     return moreData;
   }
   async setAllFaderDisplayStyle(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1894,7 +1915,7 @@ class goxlr {
     return moreData;
   }
   async setFaderColours(name, hex, hex2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1913,7 +1934,7 @@ class goxlr {
     return moreData;
   }
   async setAnimationMode(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1932,7 +1953,7 @@ class goxlr {
     return moreData;
   }
   async setAnimationMod1(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1951,7 +1972,7 @@ class goxlr {
     return moreData;
   }
   async setAnimationMod2(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1970,7 +1991,7 @@ class goxlr {
     return moreData;
   }
   async setAnimationWaterfall(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -1991,7 +2012,7 @@ class goxlr {
     return moreData;
   }
   async SetFaderDisplayStyle(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2012,7 +2033,7 @@ class goxlr {
     return moreData;
   }
   async setSampleColour(name, hex, hex2, hex3) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2031,7 +2052,7 @@ class goxlr {
     return moreData;
   }
   async setSampleOffStyle(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2050,7 +2071,7 @@ class goxlr {
     return moreData;
   }
   async setSimpleColour(name, hex) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2069,7 +2090,7 @@ class goxlr {
     return moreData;
   }
   async setMicrophoneGain(name, value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2088,7 +2109,7 @@ class goxlr {
     return moreData;
   }
   async setMicrophoneType(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2107,7 +2128,7 @@ class goxlr {
     return moreData;
   }
   async setCompressorAttack(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2126,7 +2147,7 @@ class goxlr {
     return moreData;
   }
   async setCompressorMakeupGain(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2147,7 +2168,7 @@ class goxlr {
     return moreData;
   }
   async setCompressorRatio(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2166,7 +2187,7 @@ class goxlr {
     return moreData;
   }
   async setCompressorReleaseTime(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2187,7 +2208,7 @@ class goxlr {
     return moreData;
   }
   async setCompressorThreshold(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2208,7 +2229,7 @@ class goxlr {
     return moreData;
   }
   async setEqFreq(name, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2227,7 +2248,7 @@ class goxlr {
     return moreData;
   }
   async setEqGain(name, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2246,7 +2267,7 @@ class goxlr {
     return moreData;
   }
   async setEqMiniFreq(name, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2265,7 +2286,7 @@ class goxlr {
     return moreData;
   }
   async setEqMiniGain(name, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2284,7 +2305,7 @@ class goxlr {
     return moreData;
   }
   async setGateActive(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2303,7 +2324,7 @@ class goxlr {
     return moreData;
   }
   async setGateAttack(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2322,7 +2343,7 @@ class goxlr {
     return moreData;
   }
   async setGateAttenuation(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2341,7 +2362,7 @@ class goxlr {
     return moreData;
   }
   async setGateRelease(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2360,7 +2381,7 @@ class goxlr {
     return moreData;
   }
   async setGateThreshold(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2379,7 +2400,7 @@ class goxlr {
     return moreData;
   }
   async setRouter(name, name2, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2398,7 +2419,7 @@ class goxlr {
     return moreData;
   }
   async addSample(name, name2, name3) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2417,7 +2438,7 @@ class goxlr {
     return moreData;
   }
   async playSampleByIndex(name, name2, value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2436,7 +2457,7 @@ class goxlr {
     return moreData;
   }
   async removeSampleByIndex(name, name2, value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2457,7 +2478,7 @@ class goxlr {
     return moreData;
   }
   async setSamplerFunction(name, name2, name3) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2476,7 +2497,7 @@ class goxlr {
     return moreData;
   }
   async setSamplerOrder(name, name2, name3) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2495,7 +2516,7 @@ class goxlr {
     return moreData;
   }
   async setSampleStartPercent(name, name2, value, value2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2519,7 +2540,7 @@ class goxlr {
     return moreData;
   }
   async setSampleStopPercent(name, name2, value, value2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2543,7 +2564,7 @@ class goxlr {
     return moreData;
   }
   async setSamplerPreBufferDuration(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2564,7 +2585,7 @@ class goxlr {
     return moreData;
   }
   async clearSampleProcessError() {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2585,7 +2606,7 @@ class goxlr {
     return moreData;
   }
   async setMuteHoldDuration(value) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2604,7 +2625,7 @@ class goxlr {
     return moreData;
   }
   async setVCMuteAlsoMuteCM(bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2623,7 +2644,7 @@ class goxlr {
     return moreData;
   }
   async setElementDisplayMode(name, name2) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2644,7 +2665,7 @@ class goxlr {
     return moreData;
   }
   async loadMicProfile(name, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2663,7 +2684,7 @@ class goxlr {
     return moreData;
   }
   async deleteMicProfile(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2682,7 +2703,7 @@ class goxlr {
     return moreData;
   }
   async loadProfile(name, bool) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2701,7 +2722,7 @@ class goxlr {
     return moreData;
   }
   async deleteProfile(name) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
@@ -2720,7 +2741,7 @@ class goxlr {
     return moreData;
   }
   async setShutdownCommands(json) {
-    await init(this.bindAddress, this.port);
+    await init(this.bindAddress, this.port, this.serial);
 
     const flowId = id;
     const data = {
