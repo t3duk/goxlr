@@ -3,25 +3,25 @@ var socket = 0;
 var serial = 0;
 var id = 0;
 var eventQueue = [];
-const debug = true;
+const debug = false;
 
 async function init(bindAddress = "127.0.0.1", port = 14564, userSerial = 0) {
-  console.log(bindAddress, port, userSerial);
+  if (debug) console.log(bindAddress, port, userSerial);
   await new Promise((resolve, reject) => {
     if (socket != 0) {
-      console.log("Socket already initialized.");
+      if (debug) console.log("Socket already initialized.");
       resolve(true);
       return true;
     } else {
-      console.log("Initializing socket...");
+      if (debug) console.log("Initializing socket...");
       socket = new WebSocket(`ws://${bindAddress}:${port}/api/websocket`);
-      console.log(`ws://${bindAddress}:${port}/api/websocket`);
+      if (debug) console.log(`ws://${bindAddress}:${port}/api/websocket`);
       socket.onopen = async function () {
         const data = {
           id: id,
           data: "GetStatus",
         };
-        console.log("Socket initialized.");
+        if (debug) console.log("Socket initialized.");
         await socket.send(JSON.stringify(data));
       };
 
@@ -30,12 +30,12 @@ async function init(bindAddress = "127.0.0.1", port = 14564, userSerial = 0) {
         eventQueue.push(data);
         if (userSerial != 0) {
           if (data.data.Status && data.data.Status.mixers[userSerial]) {
-            console.log("User defined serial found.");
+            if (debug) console.log("User defined serial found.");
             serial = userSerial;
             resolve(serial);
           } else {
             if (data.data.Status && !serial && data.id == id) {
-              console.log("No user defined serial found.");
+              if (debug) console.log("No user defined serial found.");
               serial = Object.keys(data.data.Status.mixers)[0];
               resolve(serial);
               id++;
@@ -45,7 +45,7 @@ async function init(bindAddress = "127.0.0.1", port = 14564, userSerial = 0) {
           }
         } else {
           if (data.data.Status && !serial && data.id == id) {
-            console.log("No user defined serial found.");
+            if (debug) console.log("No user defined serial found.");
             serial = Object.keys(data.data.Status.mixers)[0];
             resolve(serial);
             id++;
@@ -56,7 +56,7 @@ async function init(bindAddress = "127.0.0.1", port = 14564, userSerial = 0) {
       };
 
       socket.onerror = async function (error) {
-        console.log("Error - GoXLR Utility has not been found.");
+        if (debug) console.log("Error - GoXLR Utility has not been found.");
         console.error(error);
         process.exit(1);
       };
@@ -284,7 +284,7 @@ class goxlr {
       await init(this.bindAddress, this.port, this.serial);
       return true;
     }
-    console.log("Socket already connected");
+    if (debug) console.log("Socket already connected");
     return false;
   }
   async close() {
@@ -293,7 +293,7 @@ class goxlr {
       socket = 0;
       return true;
     }
-    console.log("Socket not connected");
+    if (debug) console.log("Socket not connected");
     return false;
   }
   async getStatus() {
