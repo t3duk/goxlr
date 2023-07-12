@@ -27,7 +27,6 @@ async function init(bindAddress = "127.0.0.1", port = 14564, userSerial = 0) {
 
       socket.onmessage = async function (event) {
         const data = JSON.parse(event.data);
-        eventQueue.push(data);
         if (userSerial != 0) {
           if (data.data.Status && data.data.Status.mixers[userSerial]) {
             if (debug) console.log("User defined serial found.");
