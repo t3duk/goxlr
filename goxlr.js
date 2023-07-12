@@ -7,33 +7,40 @@ var eventQueue = [];
 async function init(bindAddress = "127.0.0.1", port = 14564) {
   await new Promise((resolve, reject) => {
     if (socket != 0) {
+      console.log("Socket already initialized.");
       resolve(true);
-      return;
-    }
-    socket = new WebSocket(`ws://${bindAddress}:${port}/api/websocket`);
-    socket.onopen = async function () {
-      const data = {
-        id: id,
-        data: "GetStatus",
+      return true;
+    } else {
+      console.log("Initializing socket...");
+      socket = new WebSocket(`ws://${bindAddress}:${port}/api/websocket`);
+      console.log(`ws://${bindAddress}:${port}/api/websocket`);
+      socket.onopen = async function () {
+        const data = {
+          id: id,
+          data: "GetStatus",
+        };
+        console.log("Socket initialized.");
+        await socket.send(JSON.stringify(data));
       };
-      await socket.send(JSON.stringify(data));
-    };
 
-    socket.onmessage = async function (event) {
-      const data = JSON.parse(event.data);
-      eventQueue.push(data);
-      if (data.data.Status && !serial && data.id == id) {
-        serial = Object.keys(data.data.Status.mixers)[0];
-        resolve(serial);
-        id++;
-      }
-    };
+      socket.onmessage = async function (event) {
+        const data = JSON.parse(event.data);
+        eventQueue.push(data);
+        if (data.data.Status && !serial && data.id == id) {
+          serial = Object.keys(data.data.Status.mixers)[0];
+          resolve(serial);
+          id++;
+        } else if (data.data.Status && serial && data.id == id) {
+          resolve(serial);
+        }
+      };
 
-    socket.onerror = async function (error) {
-      console.log("Error - GoXLR Utility has not been found.");
-      console.error(error);
-      process.exit(1);
-    };
+      socket.onerror = async function (error) {
+        console.log("Error - GoXLR Utility has not been found.");
+        console.error(error);
+        process.exit(1);
+      };
+    }
   }).catch((err) => {
     console.error(err);
     process.exit(1);
@@ -251,9 +258,18 @@ class goxlr {
     const moreData = await awaitQueueData(flowId);
     return moreData;
   }
+  async connect() {
+    if (!socket) {
+      await init(this.bindAddress, this.port);
+      return true;
+    }
+    console.log("Socket already connected");
+    return false;
+  }
   async close() {
     if (socket) {
       socket.close();
+      socket = 0;
       return true;
     }
     console.log("Socket not connected");
