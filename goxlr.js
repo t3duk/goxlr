@@ -529,7 +529,7 @@ class goxlr {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetFXEnabled: [bool] }] },
+      data: { Command: [serial, { SetFXEnabled: bool }] },
     };
     socket.send(JSON.stringify(data));
     socket.onmessage = async function (event) {
@@ -548,7 +548,7 @@ class goxlr {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { setHardTuneEnabled: [bool] }] },
+      data: { Command: [serial, { SetHardTuneEnabled: bool }] },
     };
     socket.send(JSON.stringify(data));
     socket.onmessage = async function (event) {
@@ -567,7 +567,7 @@ class goxlr {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetMegaphoneEnabled: [bool] }] },
+      data: { Command: [serial, { SetMegaphoneEnabled: bool }] },
     };
     socket.send(JSON.stringify(data));
     socket.onmessage = async function (event) {
@@ -586,7 +586,7 @@ class goxlr {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetRobotEnabled: [bool] }] },
+      data: { Command: [serial, { SetRobotEnabled: bool }] },
     };
     socket.send(JSON.stringify(data));
     socket.onmessage = async function (event) {
@@ -605,7 +605,7 @@ class goxlr {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { SetCoughIsHold: [bool] }] },
+      data: { Command: [serial, { SetCoughIsHold: bool }] },
     };
     socket.send(JSON.stringify(data));
     socket.onmessage = async function (event) {
