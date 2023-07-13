@@ -548,7 +548,7 @@ class goxlr {
     const flowId = id;
     const data = {
       id: flowId,
-      data: { Command: [serial, { setHardTuneEnabled: bool }] },
+      data: { Command: [serial, { SetHardTuneEnabled: bool }] },
     };
     socket.send(JSON.stringify(data));
     socket.onmessage = async function (event) {
