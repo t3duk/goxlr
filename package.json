@@ -1,6 +1,6 @@
 {
   "name": "goxlr",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "A wrapper for GoXLR Utility (https://github.com/GoXLR-on-Linux/goxlr-utility)",
   "main": "goxlr.js",
   "keywords": [],
