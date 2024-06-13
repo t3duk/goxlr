@@ -1,3 +1,7 @@
+# Project Update [13/06/24]
+
+Soon, this project wll be renamed to `goxlr` and will support TypeScript and unit tests.
+
 # GoXLR JS
 
 ![npm](https://img.shields.io/npm/v/goxlr?label=version)
