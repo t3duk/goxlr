@@ -1,4 +1,4 @@
-import { GoXLRStatus } from "../types/GoXLRStatus";
+import { GoXLRStatus } from "../types/GoXLRStatus.interface";
 
 export async function GetStatus(
   address: string,

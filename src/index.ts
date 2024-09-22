@@ -1,5 +1,5 @@
 import { GetStatus } from "./modules/GetStatus";
-import { GoXLRStatus } from "./types/GoXLRStatus";
+import { GoXLRStatus } from "./types/GoXLRStatus.interface";
 
 export default class GoXLR {
   address: string;
