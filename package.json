@@ -1,7 +1,7 @@
 {
   "name": "goxlr",
-  "version": "1.0.0",
-  "description": "Soon, this project wll be renamed to `goxlr` and will support TypeScript and unit tests.",
+  "version": "2.0.0",
+  "description": "GoXLR is a wrapper for GoXLR Utility API made by the GoXLR on Linux Organisation compatible with both JavaScript and TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -9,10 +9,14 @@
     "build": "tsc"
   },
   "keywords": [
-    "goxlr"
+    "goxlr",
+    "wrapper",
+    "websocket",
+    "api",
+    "utility"
   ],
   "author": "t3d.uk",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.5.5",
     "typescript": "^5.6.2"
