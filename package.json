@@ -1,12 +1,20 @@
 {
   "name": "goxlr",
-  "version": "1.3.1",
-  "description": "A wrapper for GoXLR Utility (https://github.com/GoXLR-on-Linux/goxlr-utility)",
-  "main": "goxlr.js",
-  "keywords": [],
+  "version": "1.0.0",
+  "description": "Soon, this project wll be renamed to `goxlr` and will support TypeScript and unit tests.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "keywords": [
+    "goxlr"
+  ],
   "author": "t3d.uk",
-  "license": "MIT",
-  "dependencies": {
-    "ws": "^8.13.0"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "typescript": "^5.6.2"
   }
 }
