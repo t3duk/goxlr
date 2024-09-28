@@ -1,6 +1,6 @@
-import { GoXLRStatusFader } from "./GoXLRStatusFader.interface";
-import { GoXLRStatusRouter } from "./GoXLRStatusRouter.interface";
-import { GoXLRStatusSampleBank } from "./GoXLRStatusSampleBank.interface";
+import { GoXLRStatusMixersFader } from "./GoXLRStatusMixersFader.interface";
+import { GoXLRStatusMixersRouter } from "./GoXLRStatusMixersRouter.interface";
+import { GoXLRStatusMixersSampleBank } from "./GoXLRStatusMixersSampleBank.interface";
 
 export interface GoXLRStatusMixers {
   [serialNumber: string]: {
@@ -27,10 +27,10 @@ export interface GoXLRStatusMixers {
     sleep_commands: [];
     wake_commands: [];
     fader_status: {
-      A: GoXLRStatusFader;
-      B: GoXLRStatusFader;
-      C: GoXLRStatusFader;
-      D: GoXLRStatusFader;
+      A: GoXLRStatusMixersFader;
+      B: GoXLRStatusMixersFader;
+      C: GoXLRStatusMixersFader;
+      D: GoXLRStatusMixersFader;
     };
     mic_status: {
       mic_type: string;
@@ -119,14 +119,14 @@ export interface GoXLRStatusMixers {
       deesser: number;
     };
     router: {
-      Microphone: GoXLRStatusRouter;
-      Chat: GoXLRStatusRouter;
-      Music: GoXLRStatusRouter;
-      Game: GoXLRStatusRouter;
-      Console: GoXLRStatusRouter;
-      LineIn: GoXLRStatusRouter;
-      System: GoXLRStatusRouter;
-      Samples: GoXLRStatusRouter;
+      Microphone: GoXLRStatusMixersRouter;
+      Chat: GoXLRStatusMixersRouter;
+      Music: GoXLRStatusMixersRouter;
+      Game: GoXLRStatusMixersRouter;
+      Console: GoXLRStatusMixersRouter;
+      LineIn: GoXLRStatusMixersRouter;
+      System: GoXLRStatusMixersRouter;
+      Samples: GoXLRStatusMixersRouter;
     };
     cough_button: {
       is_toggle: boolean;
@@ -447,9 +447,9 @@ export interface GoXLRStatusMixers {
       clear_active: boolean;
       record_buffer: number | null;
       banks: {
-        A: GoXLRStatusSampleBank;
-        B: GoXLRStatusSampleBank;
-        C: GoXLRStatusSampleBank;
+        A: GoXLRStatusMixersSampleBank;
+        B: GoXLRStatusMixersSampleBank;
+        C: GoXLRStatusMixersSampleBank;
       };
     };
     settings: {

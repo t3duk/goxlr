@@ -1,4 +1,4 @@
-export interface GoXLRStatusFader {
+export interface GoXLRStatusMixersFader {
   channel: string;
   mute_type: string;
   scribble: {

@@ -1,4 +1,4 @@
-export interface GoXLRStatusRouter {
+export interface GoXLRStatusMixersRouter {
   Headphones: boolean;
   BroadcastMix: boolean;
   ChatMic: boolean;
