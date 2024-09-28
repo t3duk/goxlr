@@ -20,8 +20,10 @@ export default class GoXLR {
     }
   }
 
+  /**
+   * Returns the global current state of the driver
+   */
   async status(): Promise<GoXLRStatus> {
-    // Init is not called here as it is not needed
     return await GetStatus(this.address, this.port);
   }
 }
