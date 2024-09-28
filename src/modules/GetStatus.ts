@@ -18,7 +18,7 @@ export async function GetStatus(
 
       if (data.id === identifier) {
         ws.close();
-        resolve(data.data);
+        resolve(data.data.Status);
       }
     };
 
