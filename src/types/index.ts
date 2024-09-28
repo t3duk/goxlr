@@ -1,0 +1,9 @@
+export { GoXLRStatus } from "./GoXLRStatus.interface";
+export { GoXLRStatusMixers } from "./GoXLRStatusMixers.interface";
+export { GoXLRStatusConfig } from "./GoXLRStatusConfig.interface";
+export { GoXLRStatusSample } from "./GoXLRStatusSample.interface";
+export { GoXLRStatusMixersFader } from "./GoXLRStatusMixersFader.interface";
+export { GoXLRStatusMixersRouter } from "./GoXLRStatusMixersRouter.interface";
+export { GoXLRStatusMixersSampleBank } from "./GoXLRStatusMixersSampleBank.interface";
+export { GoXLRStatusMixersSamplerBankButtonSample } from "./GoXLRStatusMixersSamplerBankButtonSample.interface";
+export { GoXLRStatusSamplerButton } from "./GoXLRStatusSamplerButton.interface";

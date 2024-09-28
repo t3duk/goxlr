@@ -1,29 +1,15 @@
-import { GoXLRStatus } from "../types/GoXLRStatus.interface";
+import { GoXLRStatus } from "../types";
+import ws from "../lib/ws";
 
 export async function GetStatus(
   address: string,
   port: string
 ): Promise<GoXLRStatus> {
-  const identifier = Math.floor(Math.random() * 0xffffffff);
+  return new Promise(async (resolve, reject) => {
+    const data = "GetStatus";
 
-  return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`ws://${address}:${port}/api/websocket`);
+    const res = await ws(address, port, data);
 
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ id: identifier, data: "GetStatus" }));
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.id === identifier) {
-        ws.close();
-        resolve(data.data.Status);
-      }
-    };
-
-    ws.onerror = (error) => {
-      throw new Error("Failed to connect to GoXLR Utility Websocket API");
-    };
+    resolve(res.data.Status as GoXLRStatus);
   });
 }
