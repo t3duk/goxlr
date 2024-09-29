@@ -7,3 +7,6 @@ export { GoXLRStatusMixersRouter } from "./GoXLRStatusMixersRouter.interface";
 export { GoXLRStatusMixersSampleBank } from "./GoXLRStatusMixersSampleBank.interface";
 export { GoXLRStatusMixersSamplerBankButtonSample } from "./GoXLRStatusMixersSamplerBankButtonSample.interface";
 export { GoXLRStatusSamplerButton } from "./GoXLRStatusSamplerButton.interface";
+export { LogLevel } from "./GoXLRLogLevel.enum";
+export { ColourWay } from "./GoXLRColourWay.enum";
+export { PathTypes } from "./GoXLRPathTypes.enum";
