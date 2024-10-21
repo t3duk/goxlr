@@ -1,12 +1,4 @@
-export { GoXLRStatus } from "./GoXLRStatus.interface";
-export { GoXLRStatusMixers } from "./GoXLRStatusMixers.interface";
-export { GoXLRStatusConfig } from "./GoXLRStatusConfig.interface";
-export { GoXLRStatusSample } from "./GoXLRStatusSample.interface";
-export { GoXLRStatusMixersFader } from "./GoXLRStatusMixersFader.interface";
-export { GoXLRStatusMixersRouter } from "./GoXLRStatusMixersRouter.interface";
-export { GoXLRStatusMixersSampleBank } from "./GoXLRStatusMixersSampleBank.interface";
-export { GoXLRStatusMixersSamplerBankButtonSample } from "./GoXLRStatusMixersSamplerBankButtonSample.interface";
-export { GoXLRStatusSamplerButton } from "./GoXLRStatusSamplerButton.interface";
-export { LogLevel } from "./GoXLRLogLevel.enum";
-export { ColourWay } from "./GoXLRColourWay.enum";
-export { PathTypes } from "./GoXLRPathTypes.enum";
+export { GoXLRStatus } from "./interfaces/GoXLRStatus.interface";
+export { LogLevel } from "./enums/GoXLRLogLevel.enum";
+export { ColourWay } from "./enums/GoXLRColourWay.enum";
+export { PathTypes } from "./enums/GoXLRPathTypes.enum";

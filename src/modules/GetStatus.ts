@@ -6,10 +6,14 @@ export async function GetStatus(
   port: string
 ): Promise<GoXLRStatus> {
   return new Promise(async (resolve, reject) => {
-    const data = "GetStatus";
+    try {
+      const data = "GetStatus";
 
-    const res = await ws(address, port, data);
+      const res = await ws(address, port, data);
 
-    resolve(res.data.Status as GoXLRStatus);
+      resolve(res.data.Status as GoXLRStatus);
+    } catch (error) {
+      throw new Error("Failed to get status");
+    }
   });
 }

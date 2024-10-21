@@ -7,10 +7,14 @@ export async function SetLogLevel(
   level: keyof typeof LogLevel
 ): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    const data = { Daemon: { SetLogLevel: level } };
+    try {
+      const data = { Daemon: { SetLogLevel: level } };
 
-    const res = await ws(address, port, data);
+      const res = await ws(address, port, data);
 
-    resolve(res.data);
+      resolve(res.data);
+    } catch (error) {
+      throw new Error("Failed to set log level");
+    }
   });
 }
